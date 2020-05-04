@@ -200,6 +200,7 @@ void PhotonContainer::updateParticle(uint idx, Photon& photon)
     photon.isIsolated_Cone40 =          m_isIsolated_Cone40         ->at(idx);
     photon.isIsolated_Cone20 =          m_isIsolated_Cone20         ->at(idx);
     photon.ptcone20 =                   m_ptcone20                  ->at(idx);
+/*
     photon.ptcone30 =                   m_ptcone30                  ->at(idx);
     photon.ptcone40 =                   m_ptcone40                  ->at(idx);
     photon.ptvarcone20 =                m_ptvarcone20               ->at(idx);
@@ -207,6 +208,7 @@ void PhotonContainer::updateParticle(uint idx, Photon& photon)
     photon.ptvarcone40 =                m_ptvarcone40               ->at(idx);
     photon.topoetcone20 =               m_topoetcone20              ->at(idx);
     photon.topoetcone30 =               m_topoetcone30              ->at(idx);
+*/
     photon.topoetcone40 =               m_topoetcone40              ->at(idx);
   }
 

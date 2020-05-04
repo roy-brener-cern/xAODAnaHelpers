@@ -621,10 +621,15 @@ if __name__ == "__main__":
 
     xAH_logger.info("\tsubmit job")
     if args.driver in ["prun","condor","lsf","slurm","local"] and not args.optBatchWait:
+      print("T1111*****************************")
       driver.submitOnly(job, args.submit_dir)
+      print("R123*****************************")
     else:
+      print("T2222*****************************")
+      print(args.submit_dir)
       driver.submit(job, args.submit_dir)
-
+      print("A123*****************************")
+ 
     SCRIPT_END_TIME = datetime.datetime.now()
 
     with open(os.path.join(args.submit_dir, 'xAH_run.log'), 'w+') as f:

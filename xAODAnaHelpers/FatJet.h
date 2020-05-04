@@ -20,7 +20,7 @@ namespace xAH {
       float JetEMScaleMomentum_phi;
       float JetEMScaleMomentum_m;
       float JetEMScaleMomentum_pt;
-
+      float ANN_score;
       // area
       float GhostArea;
       float ActiveArea;
@@ -29,7 +29,6 @@ namespace xAH {
       float ActiveArea4vec_eta;
       float ActiveArea4vec_phi;
       float ActiveArea4vec_m;
-
       // substructure
       float  Split12;
       float  Split23;
