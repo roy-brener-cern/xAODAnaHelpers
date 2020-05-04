@@ -107,7 +107,7 @@ parser._positionals.title = "required"
 parser._optionals.title = "optional"
 
 # positional argument, require the first argument to be the input filename
-parser_requiredNamed.add_argument('--files', dest='input_filename', metavar='file', type=str, nargs='+', required=True, help='input file(s) to read. This gives all the input files for the script to use. Depending on the other options specified, these could be rucio sample names, local paths, or text files containing a list of filenames/paths.')
+parser_requiredNamed.add_argument('--files', dest='input_filename', metavar='file', type=str, nargs='+', required=True, help='input file(s) to read. This gives all the input files for the script to use. Depending on the other options specified, these could be rucio sample names, local paths, or text files containing a list of newline separated paths/filenames.')
 parser_requiredNamed.add_argument('--config', metavar='', type=str, required=True, help='configuration for the algorithms. This tells the script which algorithms to load, configure, run, and in which order. Without it, it becomes a headless chicken.')
 
 parser.add_argument('--version', action='version', version='xAH_run.py {version}'.format(version=__version__), help='{version}'.format(version=__version__))
@@ -363,6 +363,15 @@ if __name__ == "__main__":
           mother_dir = os.path.dirname(sample_dir)
           sh_list = ROOT.SH.DiskListLocal(mother_dir)
           ROOT.SH.scanDir(sh_all, sh_list, fname_base, os.path.basename(sample_dir))
+
+    # do we need to overwrite sample names?
+    if args.sample_names:
+      if len(args.sample_names) != len(sh_all):
+        raise ValueError("You specified to override the names of {0:d} samples, but we found {1:d} samples".format(len(args.sample_names), len(sh_all)))
+      else:
+        for sampleName, sample in zip(args.sample_names, sh_all):
+          MBJ_logger.info(" - changing sample name from {0:s} to {1:s}".format(sample.meta().getString(ROOT.SH.MetaFields.sampleName), sampleName))
+          sample.meta().setString(ROOT.SH.MetaFields.sampleName, sampleName)
 
     # print out the samples we found
     xAH_logger.info("\t%d different dataset(s) found", len(sh_all))

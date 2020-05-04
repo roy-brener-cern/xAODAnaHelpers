@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-#include "xAODJet/JetContainer.h"
+#include <xAODJet/JetContainer.h>
 
 #include <xAODAnaHelpers/HelperClasses.h>
 #include <xAODAnaHelpers/HelperFunctions.h>
@@ -15,8 +15,6 @@
 #include <xAODAnaHelpers/FatJet.h>
 #include <xAODAnaHelpers/ParticleContainer.h>
 #include <xAODAnaHelpers/JetContainer.h>
-
-#include "InDetTrackSelectionTool/InDetTrackSelectionTool.h"
 
 
 namespace xAH {
@@ -31,12 +29,12 @@ namespace xAH {
       virtual void setTree    (TTree *tree);
       virtual void setBranches(TTree *tree);
       virtual void clear();
-      virtual void FillFatJet( const xAOD::Jet* jet );
-      virtual void FillFatJet( const xAOD::IParticle* particle );
+      virtual void FillFatJet( const xAOD::Jet* jet           , int pvLocation );
+      virtual void FillFatJet( const xAOD::IParticle* particle, int pvLocation );
       using ParticleContainer::setTree; // make other overloaded version of execute() to show up in subclass
 
-      float       m_trackJetPtCut;
-      float       m_trackJetEtaCut;
+      float       m_trackJetPtCut  =10e3; // slimming pT cut on associated track jets
+      float       m_trackJetEtaCut =2.5;  // slimmint eta cut on associated track jets
 
     protected:
 
@@ -45,6 +43,7 @@ namespace xAH {
     private:
 
       bool SelectTrackJet(const xAOD::Jet* TrackJet);
+      float GetEMFrac(const xAOD::Jet& jet);
 
     private:
 
@@ -90,6 +89,9 @@ namespace xAH {
       std::vector<float> *m_NTrimSubjets;
       std::vector<int>   *m_NClusters;
       std::vector<int>   *m_nTracks;
+      std::vector<int>   *m_ungrtrk500;
+      std::vector<float> *m_EMFrac;
+      std::vector<int>   *m_nChargedParticles;
 
       // constituent
       std::vector< int > *m_numConstituents;
@@ -101,6 +103,12 @@ namespace xAH {
       std::vector< std::vector<float> >  *m_constituent_phi;
       std::vector< std::vector<float> >  *m_constituent_e;
 
+      // truth
+      std::vector<float> *m_truth_m;
+      std::vector<float> *m_truth_pt;
+      std::vector<float> *m_truth_phi;
+      std::vector<float> *m_truth_eta;
+      
       // bosonCount
       std::vector< int > *m_nTQuarks;
       std::vector< int > *m_nHBosons;

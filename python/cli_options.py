@@ -73,7 +73,7 @@ standard = {
     "inputList": {
         "dest": "use_inputFileList",
         "action": "store_true",
-        "help": "If enabled, will read in a text file containing a list of paths/filenames.",
+        "help": "If enabled, will read in a text file containing a list of newline separated paths/filenames.",
     },
     "inputTag": {
         "dest": "inputTag",
@@ -114,6 +114,12 @@ standard = {
         "dest": "variable_stats",
         "default": False,
         "help": "If enabled, will variable usage statistics.",
+    },
+    "sample-names": {
+        "help": "Specify the sample names for the input files if you need to change them from the default.",
+        "type": str,
+        "nargs": "+",
+        "default": [],
     },
 }
 
