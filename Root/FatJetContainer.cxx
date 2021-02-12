@@ -44,14 +44,15 @@ FatJetContainer::FatJetContainer(const std::string& name, const std::string& det
     m_ECF1              = new std::vector<float>();
     m_ECF2              = new std::vector<float>();
     m_ECF3              = new std::vector<float>();
+    m_ANN_score         = new std::vector<float>();
     m_C2                = new std::vector<float>();
     m_D2                = new std::vector<float>();
     m_NTrimSubjets      = new std::vector<float>();
     m_NClusters         = new std::vector<int>  ();
     m_nTracks           = new std::vector<int>  ();
-    m_ungrtrk500	= new std::vector<int>  ();
-    m_EMFrac		= new std::vector<float>();
-    m_nChargedParticles = new std::vector<int>();
+//    m_ungrtrk500	= new std::vector<int>  ();
+//    m_EMFrac		= new std::vector<float>();
+//    m_nChargedParticles = new std::vector<int>();
 
   }
 
@@ -140,14 +141,15 @@ FatJetContainer::~FatJetContainer()
     delete m_ECF1        ;
     delete m_ECF2        ;
     delete m_ECF3        ;
+    delete m_ANN_score   ;
     delete m_C2          ;
     delete m_D2          ;
     delete m_NTrimSubjets;
     delete m_NClusters   ;
     delete m_nTracks   ;
-    delete m_ungrtrk500		;
-    delete m_EMFrac		;
-    delete m_nChargedParticles	;
+//    delete m_ungrtrk500		;
+//    delete m_EMFrac		;
+//    delete m_nChargedParticles	;
   }
 
   if ( m_infoSwitch.m_constituent) {
@@ -197,6 +199,12 @@ FatJetContainer::~FatJetContainer()
 
 void FatJetContainer::setTree(TTree *tree)
 {
+
+  tree->SetAlias("fatjet_truth_E", "truth_fatjet_E");
+  tree->SetAlias("fatjet_truth_pt", "truth_fatjet_pt");
+  tree->SetAlias("fatjet_truth_phi", "truth_fatjet_phi");
+  tree->SetAlias("fatjet_truth_eta", "truth_fatjet_eta");
+
   //
   // Connect branches
   ParticleContainer::setTree(tree);
@@ -241,9 +249,12 @@ void FatJetContainer::setTree(TTree *tree)
     connectBranch<float>(tree, "NTrimSubjets", &m_NTrimSubjets);
     connectBranch<int>  (tree, "Nclusters",    &m_NClusters);
     connectBranch<int>  (tree, "nTracks",      &m_nTracks);
-    connectBranch<int>  (tree, "ungrtrk500",		&m_ungrtrk500);
-    connectBranch<float>(tree, "EMFrac",		&m_EMFrac);
-    connectBranch<int>  (tree, "nChargedParticles",	&m_nChargedParticles);
+//    connectBranch<int>  (tree, "ungrtrk500",		&m_ungrtrk500);
+//    connectBranch<float>(tree, "EMFrac",		&m_EMFrac);
+//    connectBranch<int>  (tree, "nChargedParticles",	&m_nChargedParticles);
+
+    connectBranch<float> (tree, "ANN_score", &m_ANN_score);
+
   }
 
   if ( m_infoSwitch.m_constituent) {
@@ -260,7 +271,7 @@ void FatJetContainer::setTree(TTree *tree)
 
   if(m_infoSwitch.m_truth)
     {
-      connectBranch<float>(tree,"truth_m",   &m_truth_m);
+      connectBranch<float>(tree,"truth_E",   &m_truth_m);
       connectBranch<float>(tree,"truth_pt",  &m_truth_pt);
       connectBranch<float>(tree,"truth_phi", &m_truth_phi);
       connectBranch<float>(tree,"truth_eta", &m_truth_eta);
@@ -330,14 +341,16 @@ void FatJetContainer::updateParticle(uint idx, FatJet& fatjet)
     fatjet.ECF1         = m_ECF1        ->at(idx);
     fatjet.ECF2         = m_ECF2        ->at(idx);
     fatjet.ECF3         = m_ECF3        ->at(idx);
+    fatjet.ANN_score    = m_ANN_score   ->at(idx);
+
     fatjet.C2           = m_C2          ->at(idx);
     fatjet.D2           = m_D2          ->at(idx);
     fatjet.NTrimSubjets = m_NTrimSubjets->at(idx);
     fatjet.NClusters    = m_NClusters   ->at(idx);
     fatjet.nTracks      = m_nTracks     ->at(idx);
-    fatjet.ungrtrk500		= m_ungrtrk500  	->at(idx);
-    fatjet.EMFrac		= m_EMFrac		->at(idx);
-    fatjet.nChargedParticles	= m_nChargedParticles	->at(idx);
+//    fatjet.ungrtrk500		= m_ungrtrk500  	->at(idx);
+//    fatjet.EMFrac		= m_EMFrac		->at(idx);
+//    fatjet.nChargedParticles	= m_nChargedParticles	->at(idx);
   }
 
   if ( m_infoSwitch.m_constituent) {
@@ -354,6 +367,7 @@ void FatJetContainer::updateParticle(uint idx, FatJet& fatjet)
 
   if(m_infoSwitch.m_truth)
     {
+      //std::cout << "++++++This is m_truth_pt (size of): " << m_truth_pt.size() << std::endl;
       fatjet.truth_p4.SetPtEtaPhiE(m_truth_pt ->at(idx),
 				   m_truth_eta->at(idx),
 				   m_truth_phi->at(idx),
@@ -431,14 +445,15 @@ void FatJetContainer::setBranches(TTree *tree)
     setBranch<float>(tree, "ECF1",         m_ECF1);
     setBranch<float>(tree, "ECF2",         m_ECF2);
     setBranch<float>(tree, "ECF3",         m_ECF3);
+    setBranch<float>(tree, "ANN_score",    m_ANN_score);
     setBranch<float>(tree, "C2",           m_C2);
     setBranch<float>(tree, "D2",           m_D2);
     setBranch<float>(tree, "NTrimSubjets", m_NTrimSubjets);
     setBranch<int>  (tree, "Nclusters",    m_NClusters);
     setBranch<int>  (tree, "nTracks",      m_nTracks);
-    setBranch<int>  (tree, "ungrtrk500",   	m_ungrtrk500);
-    setBranch<float>(tree, "EMFrac",	   	m_EMFrac);
-    setBranch<int>  (tree, "nChargedParticles",	m_nChargedParticles);
+//    setBranch<int>  (tree, "ungrtrk500",   	m_ungrtrk500);
+//    setBranch<float>(tree, "EMFrac",	   	m_EMFrac);
+//    setBranch<int>  (tree, "nChargedParticles",	m_nChargedParticles);
   }
 
   if ( m_infoSwitch.m_constituent) {
@@ -454,7 +469,7 @@ void FatJetContainer::setBranches(TTree *tree)
   }
 
   if ( m_infoSwitch.m_truth && m_mc ) {
-    setBranch<float>(tree, "truth_m"  , m_truth_m  );
+    setBranch<float>(tree, "truth_E"  , m_truth_m  );
     setBranch<float>(tree, "truth_pt" , m_truth_pt );
     setBranch<float>(tree, "truth_phi", m_truth_phi);
     setBranch<float>(tree, "truth_eta", m_truth_eta);
@@ -522,14 +537,15 @@ void FatJetContainer::clear()
     m_ECF1        ->clear();
     m_ECF2        ->clear();
     m_ECF3        ->clear();
+    m_ANN_score   ->clear();
     m_C2          ->clear();
     m_D2          ->clear();
     m_NTrimSubjets->clear();
     m_NClusters   ->clear();
     m_nTracks     ->clear();
-    m_ungrtrk500  	->clear();
-    m_EMFrac	  	->clear();
-    m_nChargedParticles	->clear();
+//    m_ungrtrk500  	->clear();
+//    m_EMFrac	  	->clear();
+//    m_nChargedParticles	->clear();
   }
 
   if ( m_infoSwitch.m_constituent) {
@@ -666,6 +682,9 @@ void FatJetContainer::FillFatJet( const xAOD::IParticle* particle, int pvLocatio
     static SG::AuxElement::ConstAccessor<float> acc_ECF3 ("ECF3");
     safeFill<float, float, xAOD::Jet>(fatjet, acc_ECF3, m_ECF3, -999, m_units);
 
+    static SG::AuxElement::ConstAccessor<float> acc_ANN_score("ANN_score");
+    safeFill<float, float, xAOD::Jet>(fatjet, acc_ANN_score, m_ANN_score, -999, m_units);
+
     static SG::AuxElement::ConstAccessor<int> NTrimSubjets("NTrimSubjets");
     safeFill<int, float, xAOD::Jet>(fatjet, NTrimSubjets, m_NTrimSubjets, -999);
 
@@ -697,18 +716,18 @@ void FatJetContainer::FillFatJet( const xAOD::IParticle* particle, int pvLocatio
         const xAOD::Jet* fatjetParent {*fatjetParentLink};
         static SG::AuxElement::ConstAccessor< std::vector<int> > acc_NumTrkPt500("NumTrkPt500");
         if ( acc_NumTrkPt500.isAvailable( *fatjetParent ) ) {
-          m_ungrtrk500->push_back( acc_NumTrkPt500( *fatjetParent )[pvLocation] );
+//          m_ungrtrk500->push_back( acc_NumTrkPt500( *fatjetParent )[pvLocation] );
         } else { 
-          m_ungrtrk500->push_back( -999 );
+//          m_ungrtrk500->push_back( -999 );
         }
       } else {
-        m_ungrtrk500->push_back(-999);
+//        m_ungrtrk500->push_back(-999);
       }
     } else {
-      m_ungrtrk500->push_back(-999);
+//      m_ungrtrk500->push_back(-999);
     }
 
-    m_EMFrac->push_back(GetEMFrac (*fatjet));
+//    m_EMFrac->push_back(GetEMFrac (*fatjet));
 	
     static SG::AuxElement::ConstAccessor<int> acc_nChargedParticles("nChargedParticles");
     if( acc_nChargedParticles.isAvailable( *fatjet ) ) {
@@ -801,6 +820,7 @@ void FatJetContainer::FillFatJet( const xAOD::IParticle* particle, int pvLocatio
       m_muonCorrected_eta->push_back(acc_correctedFatJets_tlv(*fatjet).Eta());
       m_muonCorrected_phi->push_back(acc_correctedFatJets_tlv(*fatjet).Phi());
       m_muonCorrected_m  ->push_back(acc_correctedFatJets_tlv(*fatjet).M()  / m_units);
+//Line above should either be .E() or .M() for old or new Js, respectively
   }
 
 

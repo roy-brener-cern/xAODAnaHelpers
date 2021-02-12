@@ -84,6 +84,7 @@ namespace xAH {
       std::vector<float> *m_ECF1;
       std::vector<float> *m_ECF2;
       std::vector<float> *m_ECF3;
+      std::vector<float> *m_ANN_score;
       std::vector<float> *m_C2;
       std::vector<float> *m_D2;
       std::vector<float> *m_NTrimSubjets;
